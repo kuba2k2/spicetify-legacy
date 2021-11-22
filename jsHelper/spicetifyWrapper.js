@@ -152,7 +152,14 @@ const Spicetify = {
             }
         })
         console.log(`${count}/${PLAYER_METHOD.length} Spicetify.Player methods and objects are OK.`)
-    }
+    },
+    get React() {return window.React},
+    set React(value) {window.React = value},
+    get ReactDOM() {return window.ReactDOM},
+    set ReactDOM(value) {window.ReactDOM = value},
+    ReactComponent: {
+        all: [],
+    },
 }
 
 Spicetify.URI = (function () {
@@ -1728,3 +1735,4 @@ Spicetify.CosmosAsync = {
 
 // Put `Spicetify` object to `window` object so apps iframe could access to it via `window.top.Spicetify`
 window.Spicetify = Spicetify;
+window.ReactComponent = Spicetify.ReactComponent;

@@ -483,6 +483,19 @@ this.progressbar.addListener("progress", () => {
 		`${0}Spicetify.PopupModal=this;`,
 	)
 
+	// Leak React
+	utils.Replace(
+		&input,
+		`var ([A-z])=(\{Children.+?\}),([A-z]=)`,
+		`var ${1}=${2};Spicetify.React=${1};var ${3}`,
+	)
+
+	utils.Replace(
+		&input,
+		`(\w+=)(\{createPortal:\w+)`,
+		`${1}Spicetify.ReactDOM=${2}`,
+	)
+
 	return input
 }
 
