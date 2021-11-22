@@ -6,6 +6,8 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"regexp"
+	"strings"
 	"sync"
 
 	"github.com/khanhas/spicetify-cli/src/utils"
@@ -63,6 +65,7 @@ func Start(extractedAppsPath string, flags Flag, callback func(appName string)) 
 
 						if appName == "zlink" && flags.ExposeAPIs {
 							content = exposeAPIs(content)
+							content = exposeComponents(content)
 						}
 						return content
 					})
@@ -497,6 +500,140 @@ this.progressbar.addListener("progress", () => {
 	)
 
 	return input
+}
+
+func exposeComponents(input string) string {
+	componentMapping := [][]string{
+		// component name			searched symbols
+		{"AlbumFooterMoreByCard", "AlbumFooterMoreByCard"},
+		{"MenuItemToggle", "MenuItemToggle--checked"},
+		{"Modal", "Modal__content"},
+		{"Draggable", ".dragElementClassName},"},
+		{"WithContextMenu", "{onContextMenu:this.handleContextMenu}"},
+	}
+	result := ""
+	reClassHeader := regexp.MustCompile(`class (\w) extends (\w\.default\.(?:Pure)?Component)`)
+	reClassNames := []regexp.Regexp{
+		*regexp.MustCompile(`(?is)createElement\((?:"\w+"|\w\.default),(?:\w\()?{(?:key:\w,)?(?:extra)?className:(?:\(\d,\w\.default\)\("|\w\?\w:"|")([\w-]+)"`),
+		*regexp.MustCompile(`(?s)className:"(\w+)"`),
+		*regexp.MustCompile(`(?s)desktop\.zlink\.([\w.-]+)`),
+	}
+	reUppercase := regexp.MustCompile(`[A-Z]`)
+	reNotLetters := regexp.MustCompile(`(?i)[^A-Z0-9]`)
+
+	pos := 0
+	headerMatches := reClassHeader.FindAllStringSubmatchIndex(input, -1)
+	for _, headerMatch := range headerMatches {
+		// get the class header match span
+		headerPosStart := headerMatch[0]
+		headerPosEnd := headerMatch[1]
+		// extract the minified class name and superclass name
+		headerName := input[headerMatch[2]:headerMatch[3]]
+		superName := input[headerMatch[4]:headerMatch[5]]
+
+		// find the class body
+		bodyPosStart := strings.Index(input[headerPosEnd:], "{") + headerPosEnd
+		bodyPosEnd := bodyPosStart
+		counter := 1
+		for counter > 0 {
+			bodyPosEnd++
+			ch := input[bodyPosEnd]
+			if ch == '{' {
+				counter++
+			} else if ch == '}' {
+				counter--
+			}
+		}
+		bodyPosEnd++
+		body := input[bodyPosStart:bodyPosEnd]
+
+		// default to minified class name
+		componentName := headerName
+
+		// try to find the name in JS
+		reCompName := regexp.MustCompile(`\w\.(\w+)=` + headerName)
+		compNameMatch := reCompName.FindStringSubmatch(input[bodyPosEnd : bodyPosEnd+100])
+		if compNameMatch != nil && compNameMatch[1] != "default" {
+			componentName = compNameMatch[1]
+		}
+
+		// try to apply one of the mapping patterns
+		for _, pattern := range componentMapping {
+			targetName := pattern[0]
+			for _, symbol := range pattern[1:] {
+				if strings.Contains(body, symbol) {
+					componentName = targetName
+					break
+				}
+			}
+		}
+
+		// try to find the name in className
+		for index, reClassName := range reClassNames {
+			// break if name already found
+			if headerName != componentName {
+				break
+			}
+
+			// match the current regex
+			nameMatches := reClassName.FindAllStringSubmatch(body, -1)
+			if nameMatches == nil {
+				continue
+			}
+
+			// find the shortest class name
+			shortestName := headerName
+			for _, nameMatch := range nameMatches {
+				name := nameMatch[1]
+				if shortestName == headerName || len(name) < len(shortestName) {
+					shortestName = name
+					if index == len(reClassNames)-1 {
+						shortestName += "Label"
+					}
+				}
+			}
+
+			componentName = shortestName
+		}
+
+		// sanitize the found name
+		if headerName != componentName {
+			componentName = reUppercase.ReplaceAllString(componentName, " $0")
+			componentName = reNotLetters.ReplaceAllString(componentName, " ")
+			componentName = strings.Title(strings.ToLower(componentName))
+			componentName = strings.ReplaceAll(componentName, " ", "")
+		}
+
+		// write content before class
+		result += input[pos:headerPosStart]
+
+		if headerName == componentName {
+			// no name found, write class header
+			result += input[headerPosStart:headerPosEnd]
+		} else {
+			// rename the class
+			result += `class ` + componentName + ` extends ` + superName
+		}
+
+		// write class body
+		result += body
+
+		if headerName == componentName {
+			// no name found, push the component to the array
+			result += `Spicetify.ReactComponent.all.push(` + componentName + `);`
+		} else {
+			// create an alias to the renamed class
+			result += `var ` + headerName + `=` + componentName + `;Spicetify.ReactComponent.` + componentName + `=` + headerName + `;`
+		}
+
+		// update the last position
+		pos = bodyPosEnd
+	}
+
+	// write the remaining data
+	result += input[pos:]
+
+	return result
 }
 
 const spicetifyQueueJS = `
