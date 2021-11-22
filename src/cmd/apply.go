@@ -1,7 +1,9 @@
 package cmd
 
 import (
+	"encoding/json"
 	"errors"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -60,6 +62,20 @@ func Apply() {
 
 	extentionList := featureSection.Key("extensions").Strings("|")
 	customAppsList := featureSection.Key("custom_apps").Strings("|")
+	customAppNames := []string{}
+
+	if len(extentionList) > 0 {
+		utils.PrintBold(`Transferring extensions:`)
+		pushExtensions(extentionList...)
+		utils.PrintGreen("OK")
+		nodeModuleSymlink()
+	}
+
+	if len(customAppsList) > 0 {
+		utils.PrintBold(`Creating custom apps symlinks:`)
+		customAppNames = pushApps(customAppsList...)
+		utils.PrintGreen("OK")
+	}
 
 	utils.PrintBold(`Applying additional modifications:`)
 	apply.AdditionalOptions(appDestPath, apply.Flag{
@@ -73,21 +89,9 @@ func Apply() {
 		VisHighFramerate:     toTernary("visualization_high_framerate"),
 		Extension:            extentionList,
 		CustomApp:            customAppsList,
+		CustomAppName:        customAppNames,
 	})
 	utils.PrintGreen("OK")
-
-	if len(extentionList) > 0 {
-		utils.PrintBold(`Transferring extensions:`)
-		pushExtensions(extentionList...)
-		utils.PrintGreen("OK")
-		nodeModuleSymlink()
-	}
-
-	if len(customAppsList) > 0 {
-		utils.PrintBold(`Creating custom apps symlinks:`)
-		pushApps(customAppsList...)
-		utils.PrintGreen("OK")
-	}
 
 	if len(patchSection.Keys()) > 0 {
 		utils.PrintBold(`Patching:`)
@@ -261,7 +265,8 @@ func getCustomAppPath(name string) (string, error) {
 	return "", errors.New("Custom app not found")
 }
 
-func pushApps(list ...string) {
+func pushApps(list ...string) []string {
+	customAppNames := []string{}
 	for _, name := range list {
 		customAppPath, err := getCustomAppPath(name)
 		if err != nil {
@@ -269,12 +274,54 @@ func pushApps(list ...string) {
 			continue
 		}
 
-		customAppDestPath := filepath.Join(appDestPath, name)
+		if strings.HasSuffix(customAppPath, ".spa") {
+			customAppDestPath := filepath.Join(appDestPath, strings.Replace(name, ".spa", "", 1))
+			err := utils.Unzip(customAppPath, customAppDestPath)
+			if err != nil {
+				utils.Fatal(err)
+			}
+		} else {
+			customAppDestPath := filepath.Join(appDestPath, name)
+			if err = utils.CreateJunction(customAppPath, customAppDestPath); err != nil {
+				utils.Fatal(err)
+			}
+		}
 
-		if err = utils.CreateJunction(customAppPath, customAppDestPath); err != nil {
+		manifestPath := filepath.Join(appDestPath, strings.Replace(name, ".spa", "", 1), "manifest.json")
+		jsonData, _ := ioutil.ReadFile(manifestPath)
+
+		var data map[string]json.RawMessage
+		err = json.Unmarshal(jsonData, &data)
+		if err != nil {
 			utils.Fatal(err)
 		}
+
+		var bundleType string
+		err = json.Unmarshal(data["BundleType"], &bundleType)
+		if err != nil {
+			utils.Fatal(err)
+		}
+
+		if bundleType != "Application" {
+			customAppNames = append(customAppNames, "")
+			continue
+		}
+
+		var names map[string]string
+		err = json.Unmarshal(data["AppName"], &names)
+		if err != nil {
+			var name string
+			err = json.Unmarshal(data["AppName"], &name)
+			if err != nil {
+				utils.Fatal(err)
+			}
+			customAppNames = append(customAppNames, name)
+			continue
+		}
+
+		customAppNames = append(customAppNames, names["en"])
 	}
+	return customAppNames
 }
 
 func toTernary(key string) utils.TernaryBool {

@@ -22,6 +22,7 @@ type Flag struct {
 	VisHighFramerate     utils.TernaryBool
 	Extension            []string
 	CustomApp            []string
+	CustomAppName        []string
 }
 
 // AdditionalOptions .
@@ -142,7 +143,7 @@ func zlinkMod(jsPath string, flags Flag) {
 		}
 
 		if len(flags.CustomApp) > 0 {
-			insertCustomApp(&content, flags.CustomApp)
+			insertCustomApp(&content, flags.CustomApp, flags.CustomAppName)
 		}
 
 		return content
@@ -195,7 +196,7 @@ func getColorCSS(scheme map[string]string) string {
 	return fmt.Sprintf(":root {%s\n}\n", variableList)
 }
 
-func insertCustomApp(zlinkContent *string, appList []string) {
+func insertCustomApp(zlinkContent *string, appList []string, appNames []string) {
 	symbol1 := utils.FindSymbol("React and SidebarList", *zlinkContent, []string{
 		`([\w_]+)\.default\.createElement\(([\w_]+)\.default,\{title:[\w_]+\.default\.get\("(?:desktop\.zlink\.)?your_music\.app_name"\)`,
 	})
@@ -221,12 +222,17 @@ func insertCustomApp(zlinkContent *string, appList []string) {
 	pageLogger := ""
 	menuItems := ""
 
-	for _, name := range appList {
+	for index, name := range appList {
+		appName := appNames[index]
+		if appName == "" {
+			continue
+		}
+		name = strings.Replace(name, ".spa", "", 1)
 		menuItems += react +
 			`.default.createElement(` + element +
 			`.default,{isActive:/^spotify:app:` + name +
 			`(\:.*)?$/.test(` + pageURI +
-			`),isBold:!0,label:"` + strings.Title(name) +
+			`),isBold:!0,label:"` + appName +
 			`",uri:"spotify:app:` + name + `"}),`
 
 		pageLogger += `"` + name + `":"` + name + `",`
