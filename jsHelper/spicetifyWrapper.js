@@ -1,7 +1,7 @@
 const Spicetify = {
-    get CosmosAPI() {return window.cosmos},
-    get BridgeAPI() {return window.bridge},
-    get LiveAPI() {return window.live},
+    get CosmosAPI() { return window.cosmos },
+    get BridgeAPI() { return window.bridge },
+    get LiveAPI() { return window.live },
     Player: {
         addEventListener: (type, callback) => {
             if (!(type in Spicetify.Player.eventListeners)) {
@@ -50,8 +50,8 @@ const Spicetify = {
         setMute: (b) => { Spicetify.Player.origin.changeVolume(Spicetify.Player.origin._unmutedVolume, b) },
         formatTime: (ms) => Spicetify.Player.origin._formatTime(ms),
         getHeart: () => Spicetify.LiveAPI(Spicetify.Player.data.track.uri).get("added"),
-        pause: () => {Spicetify.Player.isPlaying() && Spicetify.Player.togglePlay()},
-        play: () => {!Spicetify.Player.isPlaying() && Spicetify.Player.togglePlay()},
+        pause: () => { Spicetify.Player.isPlaying() && Spicetify.Player.togglePlay() },
+        play: () => { !Spicetify.Player.isPlaying() && Spicetify.Player.togglePlay() },
         removeEventListener: (type, callback) => {
             if (!(type in Spicetify.Player.eventListeners)) {
                 return;
@@ -64,9 +64,9 @@ const Spicetify = {
                 }
             }
         },
-        skipBack: (amount = 15e3) => {Spicetify.Player.seek(Spicetify.Player.getProgress() - amount)},
-        skipForward: (amount = 15e3) => {Spicetify.Player.seek(Spicetify.Player.getProgress() + amount)},
-        toggleHeart: () => {document.querySelector('[data-interaction-target="save-remove-button"]').click()},
+        skipBack: (amount = 15e3) => { Spicetify.Player.seek(Spicetify.Player.getProgress() - amount) },
+        skipForward: (amount = 15e3) => { Spicetify.Player.seek(Spicetify.Player.getProgress() + amount) },
+        toggleHeart: () => { document.querySelector('[data-interaction-target="save-remove-button"]').click() },
     },
     showNotification: (text) => {
         Spicetify.EventDispatcher.dispatchEvent(
@@ -1412,10 +1412,10 @@ Spicetify.getAblumArtColors = async (uri) => {
     return await Spicetify.colorExtractor(uri);
 }
 
-Spicetify.Menu = (function() {
+Spicetify.Menu = (function () {
     const collection = new Set();
 
-    const _hook = function(menuReact, itemReact, subMenuReact ) {
+    const _hook = function (menuReact, itemReact, subMenuReact) {
         function createSingleItem(item) {
             return menuReact.createElement(itemReact, {
                 label: item.name,
@@ -1448,7 +1448,7 @@ Spicetify.Menu = (function() {
         constructor(name, isEnabled, onClick) {
             this.name = name;
             this.isEnabled = isEnabled;
-            this.onClick = () => {onClick(this)};
+            this.onClick = () => { onClick(this) };
         }
         setState(isEnabled) {
             this.isEnabled = isEnabled;
