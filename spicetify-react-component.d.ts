@@ -5,6 +5,7 @@ declare class Card extends Spicetify.ReactComponent.Card { }
 declare class CardWithoutLink extends Spicetify.ReactComponent.CardWithoutLink { }
 declare class CircularLoader extends Spicetify.ReactComponent.CircularLoader { }
 declare class GlueToggle extends Spicetify.ReactComponent.GlueToggle { }
+declare class HeaderBackgroundImage extends Spicetify.ReactComponent.HeaderBackgroundImage { }
 declare class HeaderData extends Spicetify.ReactComponent.HeaderData { }
 declare class Table extends Spicetify.ReactComponent.Table { }
 declare class TableCell extends Spicetify.ReactComponent.TableCell { }
@@ -93,6 +94,13 @@ declare namespace Spicetify {
 			taId: string
 		}
 		class GlueToggle extends React.PureComponent<GlueToggleProps> { }
+
+		type HeaderBackgroundImageProps = {
+			imageUrl: string
+			scrollBackdropOpacity?: number
+			scrollOpacity?: number
+		}
+		class HeaderBackgroundImage extends React.PureComponent<HeaderBackgroundImageProps> { }
 
 		type HeaderDataProps = {
 			backgroundType?: "color" | "image"
