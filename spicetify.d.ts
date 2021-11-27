@@ -1240,9 +1240,12 @@ declare namespace Spicetify {
             MESSAGE?: string
             CONTENT?: Element
 
-            BACKDROP_DONT_COVER_PLAYER?: boolean;
+            AUTOFOCUS_OK_BUTTON?: boolean
             BACKDROP_DONT_COVER_PLAYER?: boolean
             HEIGHT?: number
+            PAGE_ID?: string
+            HIGH_PRIORITY?: boolean
+            MODAL_CLASS?: string
 
             BUTTONS?: {
                 OK?: boolean
@@ -1251,6 +1254,11 @@ declare namespace Spicetify {
 
             OK_BUTTON_LABEL?: string
             CANCEL_BUTTON_LABEL?: string
+
+            CAN_HIDE_BY_CLICKING_BACKGROUND?: boolean
+            CAN_HIDE_BY_PRESSING_ESCAPE?: boolean
+
+            renderReactComponent?: () => React.ReactNode
 
             onOk?: () => void
             onCancel?: () => void
@@ -1262,4 +1270,20 @@ declare namespace Spicetify {
 
         function hide(): void
     }
+
+    type ModalParams = {
+        children: React.ReactNode
+        title?: string;
+        className?: string
+        isCancelable?: boolean
+        okLabel?: string
+        cancelLabel?: string
+        onOk?: () => void
+        onCancel?: () => void
+        onShow?: () => void
+        onHide?: () => void
+    }
+
+    // @ts-ignore
+    function showReactModal(data: ModalParams): PopupModal
 }

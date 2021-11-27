@@ -1750,6 +1750,59 @@ Spicetify.CosmosAsync = {
     }
 };
 
+// workaround for the built-in PopupModal creating new "div" nodes, making React components never unmounted
+(function () {
+    let modalWrapper = document.createElement("div");
+    modalWrapper.className = "popover-content-scroll-area";
+
+    Spicetify.showReactModal = function ({
+        children,
+        title = null,
+        className = undefined,
+        isCancelable = true,
+        okLabel = undefined,
+        cancelLabel = undefined,
+        onOk = undefined,
+        onCancel = undefined,
+        onShow = undefined,
+        onHide = undefined,
+    } = data) {
+
+        const provider = React.createElement(
+            Redux.Provider,
+            { store: ReduxStore.default },
+            children,
+        );
+        ReactDOM.render(provider, modalWrapper);
+
+        const modal = Spicetify.PopupModal;
+        // spotify... why
+        const stopPropagation = modal.stopPropagation;
+        modal.stopPropagation = () => true;
+        modal.display({
+            MODAL_TITLE: title,
+            MODAL_CLASS: className && `iframe-modal ${className}`,
+            CONTENT: modalWrapper,
+            BUTTONS: {
+                OK: !!okLabel,
+                CANCEL: !!cancelLabel,
+            },
+            OK_BUTTON_LABEL: okLabel,
+            CANCEL_BUTTON_LABEL: cancelLabel,
+            CAN_HIDE_BY_CLICKING_BACKGROUND: isCancelable,
+            CAN_HIDE_BY_PRESSING_ESCAPE: isCancelable,
+            onShow: onShow,
+            onHide: () => {
+                modal.stopPropagation = stopPropagation;
+                onHide && onHide();
+            },
+            onOk: onOk || isCancelable && modal.hide.bind(modal) || function () { },
+            onCancel: onCancel || isCancelable && modal.hide.bind(modal) || function () { },
+        });
+        return modal;
+    };
+})();
+
 // Put `Spicetify` object to `window` object so apps iframe could access to it via `window.top.Spicetify`
 window.Spicetify = Spicetify;
 window.ReactComponent = Spicetify.ReactComponent;
