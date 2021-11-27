@@ -493,10 +493,32 @@ this.progressbar.addListener("progress", () => {
 		`var ${1}=${2};Spicetify.React=${1};var ${3}`,
 	)
 
+	// Leak ReactDOM
 	utils.Replace(
 		&input,
 		`(\w+=)(\{createPortal:\w+)`,
 		`${1}Spicetify.ReactDOM=${2}`,
+	)
+
+	// Leak Redux
+	utils.Replace(
+		&input,
+		`(\w\.\w\((\w),\{Provider:\(\)=>\w,ReactReduxContext)`,
+		`Spicetify.Redux=${2};${1}`,
+	)
+
+	// Leak ReduxStore
+	utils.Replace(
+		&input,
+		`((\w)\.default=\w\.configureStore=void 0;)`,
+		`${1}Spicetify.ReduxStore=${2};`,
+	)
+
+	// Leak Webpack modules
+	utils.Replace(
+		&input,
+		`\}\)\(\);\n`,
+		";Spicetify.Webpack={modules:__webpack_modules__,require:__webpack_require__,};})();\n",
 	)
 
 	return input

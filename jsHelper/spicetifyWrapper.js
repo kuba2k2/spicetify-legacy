@@ -153,13 +153,30 @@ const Spicetify = {
         })
         console.log(`${count}/${PLAYER_METHOD.length} Spicetify.Player methods and objects are OK.`)
     },
-    get React() {return window.React},
-    set React(value) {window.React = value},
-    get ReactDOM() {return window.ReactDOM},
-    set ReactDOM(value) {window.ReactDOM = value},
-    ReactComponent: {
+
+    // put React-related modules in global scope
+    get React() { return window.React },
+    set React(value) { window.React = value },
+    get ReactDOM() { return window.ReactDOM },
+    set ReactDOM(value) { window.ReactDOM = value },
+    get Redux() { return window.Redux },
+    set Redux(value) { window.Redux = value },
+    get ReduxStore() { return window.ReduxStore },
+    set ReduxStore(value) { window.ReduxStore = value },
+
+    // make all Webpack modules available
+    get Webpack() { return window.Webpack },
+    set Webpack(value) { window.Webpack = value },
+
+    // a proxy to put all components in global scope
+    ReactComponent: new Proxy({
         all: [],
-    },
+    }, {
+        set(_, prop, value) {
+            window[prop] = value;
+            return Reflect.set(...arguments);
+        }
+    }),
 }
 
 Spicetify.URI = (function () {
