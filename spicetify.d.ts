@@ -198,7 +198,15 @@ declare namespace Spicetify {
      * Adds a track/album or array of tracks/albums to prioritized queue.
      */
     function addToQueue(uri: string | string[]): Promise<void>
-    const BridgeAPI: any
+
+    namespace BridgeAPI {
+        function request(message: string, args?: any, callback?: (error?: object, result?: object) => void): void
+    }
+
+    namespace BridgeAsync {
+        function request(message: string, args?: any): Promise<object>
+    }
+
     const CosmosAPI: any
     /**
      * Async wrappers of CosmosAPI
@@ -218,25 +226,25 @@ declare namespace Spicetify {
             uri: string
         }
 
-        function head(url: string, headers?: object): Promise<Response>
+        function head(url: string, headers?: object): Promise<object>
 
-        function get(url: string, body?: any, headers?: object): Promise<Response>
+        function get(url: string, body?: any, headers?: object): Promise<object>
 
-        function post(url: string, body?: any, headers?: object): Promise<Response>
+        function post(url: string, body?: any, headers?: object): Promise<object>
 
-        function put(url: string, body?: any, headers?: object): Promise<Response>
+        function put(url: string, body?: any, headers?: object): Promise<object>
 
-        function del(url: string, body?: any, headers?: object): Promise<Response>
+        function del(url: string, body?: any, headers?: object): Promise<object>
 
-        function patch(url: string, body?: any, headers?: object): Promise<Response>
+        function patch(url: string, body?: any, headers?: object): Promise<object>
 
-        function sub(url: string, callback: ((b: Response) => void), onError?: ((e: Error) => void), body?: any, headers?: object): Promise<Response>
+        function sub(url: string, callback: ((b: Response) => void), onError?: ((e: Error) => void), body?: any, headers?: object): Promise<object>
 
-        function postSub(url: string, body: any, callback: ((b: Response) => void), onError?: ((e: Error) => void)): Promise<Response>
+        function postSub(url: string, body: any, callback: ((b: Response) => void), onError?: ((e: Error) => void)): Promise<object>
 
-        function request(method: Action, url: string, body?: any, headers?: object): Promise<Response>
+        function request(method: Action, url: string, body?: any, headers?: object): Promise<object>
 
-        function resolve(method: Action, url: string, body?: any, headers?: object): Promise<Response>
+        function resolve(method: Action, url: string, body?: any, headers?: object): Promise<object>
     }
     /**
      * Fetch interesting colors from URI.

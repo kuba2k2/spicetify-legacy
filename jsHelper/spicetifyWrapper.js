@@ -1716,6 +1716,20 @@ Spicetify.ContextMenu = (function () {
     return { Item, SubMenu, _addItems };
 })();
 
+Spicetify.BridgeAsync = {
+    request: (message, args) => {
+        return new Promise((resolve, reject) => {
+            Spicetify.BridgeAPI.request(message, args, (error, result) => {
+                if (error) {
+                    reject(error);
+                    return;
+                }
+                resolve(result);
+            });
+        })
+    }
+};
+
 Spicetify.CosmosAsync = {
     head: (url, headers = {}) => {
         return Spicetify.CosmosAsync.resolve(Spicetify.CosmosAPI.Action.HEAD, url, null, headers).then((e => e.headers))
