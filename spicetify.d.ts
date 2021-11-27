@@ -1,3 +1,5 @@
+/// <reference path="./spicetify-react.d.ts" />
+
 declare namespace Spicetify {
     namespace Player {
         /**
