@@ -397,6 +397,14 @@ Spicetify.URI = (function () {
      */
     var OPEN_HTTPS_PREFIX = 'https://open.spotify.com/';
 
+    /**
+     * The HTTPS URL prefix for Open.
+     *
+     * @const
+     * @private
+     */
+    var IMAGE_HTTPS_PREFIX = 'https://i.scdn.co/';
+
     var ERROR_INVALID = new TypeError('Invalid Spotify URI!');
     var ERROR_NOT_IMPLEMENTED = new TypeError('Not implemented!');
 
@@ -634,7 +642,7 @@ Spicetify.URI = (function () {
             case URI.Type.LIBRARY:
                 return [URI.Type.USER, _encodeComponent(uri.username, format), URI.Type.LIBRARY].concat(uri.category ? [uri.category] : []);
             case URI.Type.IMAGE:
-                return [URI.Type.IMAGE, uri._base62Id];
+                return [URI.Type.IMAGE, uri._hexId];
             case URI.Type.MOSAIC:
                 components = uri.ids.slice(0);
                 components.unshift(URI.Type.MOSAIC);
@@ -723,10 +731,10 @@ Spicetify.URI = (function () {
             return components[_current++];
         };
 
-        var _getIdComponent = function () {
+        var _getIdComponent = function (isHexId = false) {
             var component = _getNextComponent();
 
-            if (component.length > 22) {
+            if (isHexId && component.length != 40 || !isHexId && component.length > 22) {
                 throw new Error('Invalid ID');
             }
             return component;
@@ -871,7 +879,7 @@ Spicetify.URI = (function () {
                     return URI.localArtistURI(artistName);
                 }
             case URI.Type.IMAGE:
-                return URI.imageURI(_getIdComponent());
+                return URI.imageURI(_getIdComponent(true));
             case URI.Type.MOSAIC:
                 return URI.mosaicURI(components.slice(_current));
             case URI.Type.RADIO:
@@ -1012,7 +1020,12 @@ Spicetify.URI = (function () {
     URI.prototype.toPlayURL = function () {
         return PLAY_HTTPS_PREFIX + this.toURLPath();
     };
+    URI.prototype.toImageURL = function () {
+        return IMAGE_HTTPS_PREFIX + this.toURLPath();
+    };
     URI.prototype.toURL = function () {
+        if (this.type == URI.Type.IMAGE)
+            return this.toImageURL();
         return this.toPlayURL();
     };
     URI.prototype.toOpenURL = function () {
@@ -1297,7 +1310,7 @@ Spicetify.URI = (function () {
         return new URI(URI.Type.PROFILE, { username: username, args: args });
     };
     URI.imageURI = function (id) {
-        return new URI(URI.Type.IMAGE, { id: id });
+        return new URI(URI.Type.IMAGE, { _hexId: id });
     };
     URI.mosaicURI = function (ids) {
         return new URI(URI.Type.MOSAIC, { ids: ids });
@@ -1352,6 +1365,7 @@ Spicetify.URI = (function () {
     URI.isEpisode = function (uri) { return (URI.from(uri) || {}).type === URI.Type.EPISODE; };
     URI.isFacebook = function (uri) { return (URI.from(uri) || {}).type === URI.Type.FACEBOOK; };
     URI.isFolder = function (uri) { return (URI.from(uri) || {}).type === URI.Type.FOLDER; };
+    URI.isImage = function (uri) { return (URI.from(uri) || {}).type === URI.Type.IMAGE; };
     URI.isLocalArtist = function (uri) { return (URI.from(uri) || {}).type === URI.Type.LOCAL_ARTIST; };
     URI.isLocalAlbum = function (uri) { return (URI.from(uri) || {}).type === URI.Type.LOCAL_ALBUM; };
     URI.isLocalTrack = function (uri) { return (URI.from(uri) || {}).type === URI.Type.LOCAL; };

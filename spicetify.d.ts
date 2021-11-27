@@ -560,6 +560,12 @@ declare namespace Spicetify {
 
         /**
          *
+         * @return The Image URL string for the uri.
+         */
+        toImageURL(): string
+
+        /**
+         *
          * @return The URL string for the uri.
          */
         toURL(): string
@@ -1146,6 +1152,7 @@ declare namespace Spicetify {
         static isEpisode(uri: any): boolean
         static isFacebook(uri: any): boolean
         static isFolder(uri: any): boolean
+        static isImage(uri: any): boolean
         static isLocalArtist(uri: any): boolean
         static isLocalAlbum(uri: any): boolean
         static isLocalTrack(uri: any): boolean
