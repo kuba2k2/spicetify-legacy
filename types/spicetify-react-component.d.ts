@@ -1,21 +1,20 @@
-/// <reference path="./spicetify-react-model.d.ts" />
+/// <reference path="./spicetify-model.d.ts" />
 
-declare class Button extends Spicetify.ReactComponent.Button { }
-declare class Card extends Spicetify.ReactComponent.Card { }
-declare class CardWithoutLink extends Spicetify.ReactComponent.CardWithoutLink { }
-declare class CircularLoader extends Spicetify.ReactComponent.CircularLoader { }
-declare class GlueToggle extends Spicetify.ReactComponent.GlueToggle { }
-declare class HeaderBackgroundImage extends Spicetify.ReactComponent.HeaderBackgroundImage { }
-declare class HeaderData extends Spicetify.ReactComponent.HeaderData { }
-declare class Table extends Spicetify.ReactComponent.Table { }
-declare class TableCell extends Spicetify.ReactComponent.TableCell { }
-declare class TableHeaderCell extends Spicetify.ReactComponent.TableHeaderCell { }
-declare class TableHeaderRow extends Spicetify.ReactComponent.TableHeaderRow { }
-declare class TableRow extends Spicetify.ReactComponent.TableRow { }
-declare class TrackList extends Spicetify.ReactComponent.TrackList { }
+declare class Button extends Spicetify.ReactComponent.Button {}
+declare class Card extends Spicetify.ReactComponent.Card {}
+declare class CardWithoutLink extends Spicetify.ReactComponent.CardWithoutLink {}
+declare class CircularLoader extends Spicetify.ReactComponent.CircularLoader {}
+declare class GlueToggle extends Spicetify.ReactComponent.GlueToggle {}
+declare class HeaderBackgroundImage extends Spicetify.ReactComponent.HeaderBackgroundImage {}
+declare class HeaderData extends Spicetify.ReactComponent.HeaderData {}
+declare class Table extends Spicetify.ReactComponent.Table {}
+declare class TableCell extends Spicetify.ReactComponent.TableCell {}
+declare class TableHeaderCell extends Spicetify.ReactComponent.TableHeaderCell {}
+declare class TableHeaderRow extends Spicetify.ReactComponent.TableHeaderRow {}
+declare class TableRow extends Spicetify.ReactComponent.TableRow {}
+declare class TrackList extends Spicetify.ReactComponent.TrackList {}
 
 declare namespace Spicetify {
-
 	namespace ReactComponent {
 		type ButtonProps = {
 			type: "green" | "white" | "red" | "blue" | "gray" | "facebook" | "stroke" | "icon" | "icon-stroke" | "icon-background" | "only-text"
@@ -23,8 +22,8 @@ declare namespace Spicetify {
 			icon?: Model.Icon
 			text?: string
 			accessibleText?: string
-			texts?: Array<string>
-			accessibleTexts?: Array<string>
+			texts?: string[]
+			accessibleTexts?: string[]
 			activeTextIndex?: number
 			isDisabled?: boolean
 			isActive?: boolean
@@ -49,7 +48,7 @@ declare namespace Spicetify {
 			targetUri?: string
 			noButtons?: boolean
 			title?: string
-			subtitleLinks?: Array<string>
+			subtitleLinks?: string[]
 			description?: string
 			metadata?: string
 			progress?: number
@@ -66,7 +65,7 @@ declare namespace Spicetify {
 			forceEnableOverlay?: boolean
 			logInteraction?: () => void
 		} & CardWithoutLinkProps
-		class Card extends React.PureComponent<CardProps> { }
+		class Card extends React.PureComponent<CardProps> {}
 
 		type CardWithoutLinkProps = {
 			uri: string
@@ -78,13 +77,13 @@ declare namespace Spicetify {
 			activePageUri?: string
 			dragMetadata?: object
 		}
-		class CardWithoutLink extends React.PureComponent<CardWithoutLinkProps> { }
+		class CardWithoutLink extends React.PureComponent<CardWithoutLinkProps> {}
 
 		type CircularLoaderProps = {
 			progress: number
 			size: number
 		}
-		class CircularLoader extends React.PureComponent<CircularLoaderProps> { }
+		class CircularLoader extends React.PureComponent<CircularLoaderProps> {}
 
 		type GlueToggleProps = {
 			isActive?: boolean
@@ -93,14 +92,14 @@ declare namespace Spicetify {
 			labelId: string
 			taId: string
 		}
-		class GlueToggle extends React.PureComponent<GlueToggleProps> { }
+		class GlueToggle extends React.PureComponent<GlueToggleProps> {}
 
 		type HeaderBackgroundImageProps = {
 			imageUrl: string
 			scrollBackdropOpacity?: number
 			scrollOpacity?: number
 		}
-		class HeaderBackgroundImage extends React.PureComponent<HeaderBackgroundImageProps> { }
+		class HeaderBackgroundImage extends React.PureComponent<HeaderBackgroundImageProps> {}
 
 		type HeaderDataProps = {
 			backgroundType?: "color" | "image"
@@ -132,7 +131,7 @@ declare namespace Spicetify {
 			onOpenContextMenu?: () => void
 			play?: () => void
 		}
-		class HeaderData extends React.PureComponent<HeaderDataProps> { }
+		class HeaderData extends React.PureComponent<HeaderDataProps> {}
 
 		type TableProps = {
 			clearSelection?: () => void
@@ -141,11 +140,14 @@ declare namespace Spicetify {
 			rowHeight?: number
 			rowCount?: number
 			rowCountScrollerThreshold?: number
-			rowIds?: Array<string>
+			rowIds?: string[]
 			rowIdToIndexMap?: Map<string, number>
 			resetSelectionOriginAndFocus?: () => void
 			renderHeaderRow?: () => React.ReactNode
-			renderRow?: (rowIndex: number, { useOwnRenderLayer: boolean }) => React.ReactNode
+			renderRow?: (
+				rowIndex: number,
+				{ useOwnRenderLayer: boolean }
+			) => React.ReactNode
 			scrollNode?: HTMLElement
 			stickyTableHeaderOffsetTop?: number
 			sumOfStickyElementHeights?: number
@@ -167,7 +169,7 @@ declare namespace Spicetify {
 			colSpan?: number
 			taId?: string
 		}
-		class TableCell extends React.PureComponent<TableCellProps> { }
+		class TableCell extends React.PureComponent<TableCellProps> {}
 
 		type TableHeaderCellProps = {
 			label: string
@@ -178,17 +180,17 @@ declare namespace Spicetify {
 			sortId?: string
 			width?: number
 		}
-		class TableHeaderCell extends React.PureComponent<TableHeaderCellProps> { }
+		class TableHeaderCell extends React.PureComponent<TableHeaderCellProps> {}
 
 		type TableHeaderRowProps = {
 			extraClassName?: string
-			children: Array<React.ReactNode>
+			children: React.ReactNode[]
 		}
-		class TableHeaderRow extends React.PureComponent<TableHeaderRowProps> { }
+		class TableHeaderRow extends React.PureComponent<TableHeaderRowProps> {}
 
 		type TableRowProps = {
-			allRowIds?: Array<string>
-			allRowUris?: Array<string>
+			allRowIds?: string[]
+			allRowUris?: string[]
 			clearSelection?: () => void
 			deselectMultipleRows?: () => void
 			deselectSingleRow?: () => void
@@ -219,23 +221,23 @@ declare namespace Spicetify {
 			taId?: string
 			useFixedHeight?: boolean
 			useOwnRenderLayer?: boolean
-			children: Array<React.ReactNode>
-			selectionOrderedRowUris?: Array<string>
+			children: React.ReactNode[]
+			selectionOrderedRowUris?: string[]
 			a11yLabel?: string
 		}
-		class TableRow extends React.Component<TableRowProps> { }
+		class TableRow extends React.Component<TableRowProps> {}
 
 		type TrackListProps = {
 			scrollNode?: React.ReactNode
 			stickyViewId?: string
 			stickyElementId?: string
 			listUri?: string
-			rows?: Array<{
+			rows?: {
 				id: string
 				track: Model.Track
 				isDiscMarkerRow: boolean
 				discNumber: number
-			}>
+			}[]
 			showArtistsCell?: boolean
 			showDurationCell?: boolean
 			showMoreButtonCell?: boolean
@@ -243,10 +245,7 @@ declare namespace Spicetify {
 			showPopularityCell?: boolean
 			showSaveButtonCell?: boolean
 			showTitleCell?: boolean
-			onPlayRow?: (data: {
-				rowId: string
-				reason: string
-			}) => void
+			onPlayRow?: (data: { rowId: string; reason: string }) => void
 			getIsCurrentPlayerTrack: (p1, p2, p3) => boolean
 			sumOfStickyElementHeights?: number
 			stickyTrackListOffsetTop?: number
@@ -254,8 +253,8 @@ declare namespace Spicetify {
 			attentionHighlightRequestId?: number
 			attentionHighlightContextUri?: string
 			attentionHighlightItemUri?: string
-			selectionOrderedRowUris?: Array<string>
-			selectionOrderedRowIds?: Array<string>
+			selectionOrderedRowUris?: string[]
+			selectionOrderedRowIds?: string[]
 			isContextMenuOpen?: boolean
 			isExplicitContentFiltered?: boolean
 			playerState?: Model.PlayerState
@@ -267,10 +266,7 @@ declare namespace Spicetify {
 			logInteraction?: () => void
 		}
 		class TrackList extends React.PureComponent<TrackListProps> {
-			focusRow(data: {
-				listId: string
-				rowId: string
-			}): void
+			focusRow(data: { listId: string; rowId: string }): void
 			scrollToRow(data: {
 				listId: string
 				rowId: string
