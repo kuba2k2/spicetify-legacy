@@ -1822,6 +1822,7 @@ Spicetify.CosmosAsync = {
             onShow: onShow,
             onHide: () => {
                 modal.stopPropagation = stopPropagation;
+                ReactDOM.render(null, modalWrapper);
                 onHide && onHide();
             },
             onOk: onOk || isCancelable && modal.hide.bind(modal) || function () { },
