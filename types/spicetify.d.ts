@@ -119,3 +119,81 @@ declare namespace Spicetify {
 	// @ts-ignore
 	function showReactModal(data: ModalParams): PopupModal
 }
+
+interface IDictionary<T> {
+	[key: string]: T
+}
+
+type boolstr = "0" | "1"
+
+type AppManifest = {
+	AppDescription: IDictionary<string>
+	AppName: IDictionary<string>
+	BridgeDependencies: IDictionary<string>
+	BundleIdentifier: string
+	BundleType: "Application" | "Resources"
+	BundleVersion: string
+	Dependencies: IDictionary<string>
+	GitRevision: string
+	InjectScripts: boolean
+	InjectStylesheets: boolean
+	ProvidedFeatures?: IDictionary<boolean>
+	ResourceHost?: string
+	SkipLanguageValidation: boolean
+	SkipUnrequireValidation: boolean
+	SpmApp: boolean
+	SupportedDeviceClasses: string[]
+	SupportedLanguages: string[]
+	UserInstallable: boolean
+	VendorIdentifier: string
+} & IDictionary<any>
+
+type Spotify = {
+	app_manifest: AppManifest
+	app_uri: string
+	app_version: string
+	blocked_languages: string[]
+	client_version: string
+	container_features: {
+		autostart: boolean
+		clientRestarts: boolean
+		clientStorage: boolean
+		closeCanMinimizeOrExit: boolean
+		isAppX: boolean
+		showSystemMediaControls: boolean
+		showTrackNotifications: boolean
+	}
+	developer_mode: boolean
+	device_id: string
+	double_click_interval: number
+	event_sender_client_version: string
+	event_sender_installation_id_hex: string
+	event_sender_os_name: string
+	event_sender_os_version: string
+	first_autostart: boolean
+	is_running_on_teamcity: boolean
+	locale: string
+	localization_is_rtl: boolean
+	os: object
+	platform: string
+	platform_string: string
+	product_state: {
+		ads: boolstr
+		"app-developer": boolstr
+		catalogue: "free" | "premium"
+		collection: boolstr
+		country_code: string
+		"image-url": string
+		name: string
+		offline: boolstr
+		"preferred-locale": string
+		type: "open" | string
+	} & IDictionary<string>
+	scroller_style: "always" | string
+	userUri: string
+	username: string
+}
+
+interface Window {
+	__spotify: Spotify
+}
