@@ -17,13 +17,13 @@ if [ $# -eq 0 ]; then
     echo "DOWNLOADING    $latest_release_uri"
 	spicetify_asset_path=$(
 		command curl -sSf "$latest_release_uri" |
-			command grep -o "/kuba2k2/spicetify-legacy/releases/download/.*/spicetify-.*-${target}\\.tar\\.gz" |
+			command grep -o "/kuba2k2/spicetify-legacy/releases/download/.*/spicetify-legacy-.*-${target}\\.tar\\.gz" |
 			command head -n 1
 	)
 	if [ ! "$spicetify_asset_path" ]; then exit 1; fi
 	download_uri="https://github.com${spicetify_asset_path}"
 else
-	download_uri="https://github.com/kuba2k2/spicetify-legacy/releases/download/v${1}/spicetify-${1}-${target}.tar.gz"
+	download_uri="https://github.com/kuba2k2/spicetify-legacy/releases/download/v${1}/spicetify-legacy-${1}-${target}.tar.gz"
 fi
 
 spicetify_install="${SPICETIFY_INSTALL:-$HOME/spicetify-cli}"

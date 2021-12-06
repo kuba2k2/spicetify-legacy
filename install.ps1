@@ -50,9 +50,9 @@ if ($PSVersionTable.PSVersion.Major -gt $PSMinVersion) {
   }
 
   # Download release.
-  $zip_file = "${sp_dir}\spicetify-${version}-windows-x64.zip"
+  $zip_file = "${sp_dir}\spicetify-legacy-${version}-windows-x64.zip"
   $download_uri = "https://github.com/kuba2k2/spicetify-legacy/releases/download/" +
-  "v${version}/spicetify-${version}-windows-x64.zip"
+  "v${version}/spicetify-legacy-${version}-windows-x64.zip"
   Write-Part "DOWNLOADING    "; Write-Emphasized $download_uri
   Invoke-WebRequest -Uri $download_uri -UseBasicParsing -OutFile $zip_file
   Write-Done
