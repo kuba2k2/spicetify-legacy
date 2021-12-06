@@ -89,8 +89,8 @@ declare namespace Spicetify {
 			isActive?: boolean
 			isDisabled?: boolean
 			onChange?: (isActive: boolean) => boolean
-			labelId: string
-			taId: string
+			labelId?: string
+			taId?: string
 		}
 		class GlueToggle extends React.PureComponent<GlueToggleProps> {}
 
