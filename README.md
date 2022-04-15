@@ -12,12 +12,12 @@ Install scripts in this fork are modified to use its releases. The following is 
 
 **Windows**: In powershell
 ```powershell
-$v="1.3.0"; Invoke-WebRequest -UseBasicParsing "https://raw.githubusercontent.com/kuba2k2/spicetify-legacy/master/install.ps1" | Invoke-Expression
+$v="1.3.0"; Invoke-WebRequest -UseBasicParsing "https://raw.githubusercontent.com/kuba2k2/spicetify-legacy/legacy/install.ps1" | Invoke-Expression
 ```
 
 **Linux/MacOS:** In bash
 ```bash
-curl -fsSL https://raw.githubusercontent.com/kuba2k2/spicetify-legacy/master/install.sh -o /tmp/install.sh
+curl -fsSL https://raw.githubusercontent.com/kuba2k2/spicetify-legacy/legacy/install.sh -o /tmp/install.sh
 sh /tmp/install.sh 1.3.0
 ```
 
